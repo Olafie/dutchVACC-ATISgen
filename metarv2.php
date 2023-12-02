@@ -214,10 +214,10 @@ foreach ($trendsplit as $items) {
                 array_push($tempoweather["PHENOMENA"], $item);
             }
         }
-        echo $item . '<br>';
+        //echo $item . '<br>';
     }
 }
 
-print_r($currentweather["RVRVALUES"]);
-echo "<br>" . $currentweather["RVR"] . "<br>";
+//print_r($currentweather["RVRVALUES"]);
+//echo "<br>" . $currentweather["RVR"] . "<br>";
 ?>
