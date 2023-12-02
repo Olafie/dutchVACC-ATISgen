@@ -19,6 +19,10 @@ if ($currentweather["WIND"]["SPD"] == "1") {
     $weather .= " .. " . $currentweather["WIND"]["SPD"] . " KNOTS";
 }
 
+if (($ap == "EHGG" || $ap == "EHBK") && $currentweather["WIND"]["GST"]) {
+    $weather .= " .. GUST " . $currentweather["WIND"]["GST"] . " KNOTS";
+}
+
 if (!empty($currentweather["WIND"]["MAXDIR"]) && $ap == "EHKD") {
     $weather .= " .. VARYING BETWEEN " . $currentweather["WIND"]["MINDIR"] . " AND " . $currentweather["WIND"]["MAXDIR"] . " DEGREES";
 } else if (!empty($currentweather["WIND"]["MAXDIR"])) {
@@ -247,13 +251,17 @@ if ($currentweather["QNH"] == "") {
     $weather .= " .. QNH " . $currentweather["QNH"];
 }
 
-if (!$ap == "EHKD") {
+if ($ap !== "EHKD") {
     $weather .= " HECTOPASCAL";
 }
 
 $trend = "";
 
 if ($tempoweather["AVAILABLE"]) {
+    if ($ap == "EHGG" || $ap == "EHBK") {
+        $trend .= " .. TREND";
+    }
+
     $trend .= " .. TEMPORARY";
     if (!empty($tempoweather["WIND"]["DIR"])) {
         if ($tempoweather["WIND"]["SPD"] == "0") {
@@ -270,7 +278,13 @@ if ($tempoweather["AVAILABLE"]) {
             $trend .= " .. " . $tempoweather["WIND"]["SPD"]  ." KNOTS";
         }
 
-        if (!empty($tempoweather["WIND"]["MINDIR"])) {
+        if (($ap == "EHGG" || $ap == "EHBK") && $tempoweather["WIND"]["GST"]) {
+            $trend .= " .. GUST " . $tempoweather["WIND"]["GST"] . " KNOTS";
+        }
+
+        if (!empty($tempoweather["WIND"]["MAXDIR"]) && $ap == "EHKD") {
+            $trend .= " .. VARYING BETWEEN " . $currentweather["WIND"]["MINDIR"] . " AND " . $currentweather["WIND"]["MAXDIR"] . " DEGREES";
+        } else if (!empty($tempoweather["WIND"]["MINDIR"])) {
             $trend .= " .. VARIABLE BETWEEN " . $tempoweather["WIND"]["MINDIR"] . " AND " . $tempoweather["WIND"]["MAXDIR"] . " DEGREES";
         }
     }
@@ -449,6 +463,9 @@ if ($tempoweather["AVAILABLE"]) {
 }
 
 if ($becmgweather["AVAILABLE"]) {
+    if (($ap == "EHGG" || $ap == "EHBK") && $tempoweather["AVAILABLE"] = false) {
+        $trend .= " .. TREND";
+    }
     $trend .= " .. BECOMING";
         if (!empty($becmgweather["WIND"]["DIR"])) {
             if ($becmgweather["WIND"]["SPD"] == "0") {
@@ -459,13 +476,19 @@ if ($becmgweather["AVAILABLE"]) {
             $trend .= " .. WIND " . $becmgweather["WIND"]["DIR"] . " DEGREES";
         }
 
+        if (($ap == "EHGG" || $ap == "EHBK") && $becmgweather["WIND"]["GST"]) {
+            $trend .= " .. GUST " . $becmgweather["WIND"]["GST"] . " KNOTS";
+        }
+
         if ($becmgweather["WIND"]["SPD"] == "1") {
             $trend .= " .. " . $becmgweather["WIND"]["SPD"]  ." KNOT";
         } else if ($becmgweather["WIND"]["SPD"] > "1"){
             $trend .= " .. " . $becmgweather["WIND"]["SPD"]  ." KNOTS";
         }
 
-        if (!empty($becmgweather["WIND"]["MINDIR"])) {
+        if (!empty($becmgweather["WIND"]["MAXDIR"]) && ($ap == "EHKD")) {
+            $trend .= " .. VARYING BETWEEN " . $currentweather["WIND"]["MINDIR"] . " AND " . $currentweather["WIND"]["MAXDIR"] . " DEGREES";
+        } else if (!empty($becmgweather["WIND"]["MINDIR"])) {
             $trend .= " .. VARIABLE BETWEEN " . $becmgweather["WIND"]["MINDIR"] . " AND " . $becmgweather["WIND"]["MAXDIR"] . " DEGREES";
         }
     }
@@ -684,9 +707,11 @@ define("info", [
 ]);
 $cycle = info[$_GET['atis']];
 
+$version = $_GET['version'];
+
 $ownremarks = $_GET['own'];
-if (preg_match('/[A-Z]/', $ownremarks)) {
-    $own = " .. " . substr($ownremarks, 0);
+if (preg_match('/./', $ownremarks)) {
+    $own = " .. " . strtoupper($ownremarks);
 } else {
     $own = "";
 }
@@ -703,7 +728,181 @@ if (preg_match('/[0-9][0-9][0-9][0-9][DNU]/', $wx, $rvrmatch)) {
 
 if (str_starts_with($ap, "EH")) {
     $trl = intval(ceil((307.8 - 0.13986 * $currentweather["TEMPERATURE"] - 0.26224 * $currentweather["QNH"]) / 5) * 5);
-    if ($ap === "EHAM") {
+    if ($ap === "EHAM" && $version == "A") {
+        define("app", [
+            'sra' => ' .. SURVEILLANCE RADAR APPROACH',
+            'rnp' => " .. RNP APPROACH",
+            'vis' => " .. VISUAL APPORACH",
+            '' => '',
+        ]);
+        $app1 = app[$_GET['apt1']];
+        $app2 = app[$_GET['apt2']];
+
+        //Preferential Runway System - Arrivals
+        $arr = $_GET['arr'];
+        $arrrwys = explode(',', $arr);
+        if (in_array('06', $arrrwys)) {
+            $arr_pri = '06';
+        } else if (in_array('18R', $arrrwys)) {
+            $arr_pri = '18R';
+        } else if (in_array('36R', $arrrwys)) {
+            $arr_pri = '36R';
+        } else {
+            $arr_pri = $arrrwys[0];
+        }
+        if (!empty($arr_pri)) {
+            $arrrwy = " .. MAIN LANDING RUNWAY " . $arr_pri . $app1;
+        }
+
+        foreach ($arrrwys as $rwy) {
+            if ($rwy == $arr_pri) {
+            } else if ($rwy == "22" || $rwy == "04") {
+            } else {
+                $arrrwy .= " .. SECONDARY LANDING RUNWAY " . $rwy . $app2;
+            }
+        }
+
+        $convergingapproach = false;
+        if (in_array('36R', $arrrwys) && in_array('06', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('27', $arrrwys) && in_array('06', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('09', $arrrwys) && in_array('06', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('18C', $arrrwys) && in_array('06', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('18R', $arrrwys) && in_array('06', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('09', $arrrwys) && in_array('04', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('06', $arrrwys) && in_array('04', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('18C', $arrrwys) && in_array('27', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('18R', $arrrwys) && in_array('27', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('36C', $arrrwys) && in_array('27', $arrrwys)) {
+            $convergingapproach = true;
+        } else if (in_array('36R', $arrrwys) && in_array('27', $arrrwys)) {
+            $convergingapproach = true;
+        }
+
+        if ($convergingapproach) {
+            $convergingapproaches = "CONVERGING APPROACHES IN PROGRESS .. ";
+        } else {
+            $convergingapproaches = "";
+        }
+
+        $parallelapproach = false;
+        if (in_array('18R', $arrrwys) && in_array('18C', $arrrwys)) {
+            $parallelapproach = true;
+        } else if (in_array('18R', $arrrwys) && in_array('36C', $arrrwys)) {
+            $parallelapproach = true;
+        } else if (in_array('36C', $arrrwys) && in_array('36R', $arrrwys)) {
+            $parallelapproach = true;
+        } else if (in_array('18R', $arrrwys) && in_array('36R', $arrrwys)) {
+            $parallelapproach = true;
+        }
+
+        if ($parallelapproach) {
+            $parallelapproaches = "INDEPENDENT PARALLEL APPROACHES IN PROGRESS .. ";
+        } else {
+            $parallelapproaches = "";
+        }
+
+        //Operational Reports
+        // BZO
+        if ($currentweather["VISIBILITY"] < "550" || ($rvr < "1500")) {
+            $bzo = 'LOW VISIBILITY PROCEDURES IN PROGRESS .. ';
+        } else if (preg_match('/BKN[0-9][0-9][0-9]/', $wx, $bknmatch)) {
+            $ceiling = substr($bknmatch[0], 3, 3);
+            if ($ceiling < "002") {
+                $bzo = 'LOW VISIBILITY PROCEDURES IN PROGRESS .. ';
+            } else {
+                $bzo = '';
+            }
+        } else if (preg_match('/OVC[0-9][0-9][0-9]/', $wx, $ovcmatch)) {
+            $ceiling = substr($ovcmatch[0], 3, 3);
+            if ($ceiling < "002") {
+                $bzo = 'LOW VISIBILITY PROCEDURES IN PROGRESS .. ';
+            } else {
+                $bzo = '';
+            }
+        } else {
+            $bzo = '';
+        }
+
+        //Output
+        echo "THIS IS SCHIPHOL ARRIVAL INFORMATION " . $cycle . $arrrwy . " .. TRANSITION LEVEL " . $trl . $weather . $trend . " .. OPERATIONAL REPORT .. " . $bzo . $parallelapproaches . $convergingapproaches . "CONTACT APPROACH AND ARRIVAL CALLSIGN ONLY" . $own . " .. CONFIRM INFORMATION " . $cycle . " ON FIRST CONTACT";
+
+        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?version=A&arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&apt1=$apt2=&own=
+    } else if ($ap === "EHAM" && $version == "D") {
+        //Preferential Runway System - Departures
+        $dep = $_GET['dep'];
+        $deprwys = explode(',', $dep);
+        if (in_array('36L', $deprwys)) {
+            $dep_pri = '36L';
+        } else if (in_array('24', $deprwys)) {
+            $dep_pri = '24';
+        } else if (in_array('18L', $deprwys)) {
+            $dep_pri = '18L';
+        } else {
+            $dep_pri = $deprwys[0];
+        }
+        if (!empty($dep_pri)) {
+            $deprwy = " .. MAIN DEPARTING RUNWAY " . $dep_pri;
+        }
+        foreach ($deprwys as $rwy) {
+            if ($rwy == $dep_pri) {
+            } else if ($rwy == "22" || $rwy == "04") {
+            } else {
+                $deprwy .= " .. SECONDARY DEPARTING RUNWAY " . $rwy;
+            }
+        }
+
+        //Operational Reports
+        // BZO
+        if ($currentweather["VISIBILITY"] < "550" || ($rvr < "1500")) {
+            $bzo = 'LOW VISIBILITY PROCEDURES IN PROGRESS .. ';
+        } else if (preg_match('/BKN[0-9][0-9][0-9]/', $wx, $bknmatch)) {
+            $ceiling = substr($bknmatch[0], 3, 3);
+            if ($ceiling < "002") {
+                $bzo = 'LOW VISIBILITY PROCEDURES IN PROGRESS .. ';
+            } else {
+                $bzo = '';
+            }
+        } else if (preg_match('/OVC[0-9][0-9][0-9]/', $wx, $ovcmatch)) {
+            $ceiling = substr($ovcmatch[0], 3, 3);
+            if ($ceiling < "002") {
+                $bzo = 'LOW VISIBILITY PROCEDURES IN PROGRESS .. ';
+            } else {
+                $bzo = '';
+            }
+        } else if ($currentweather["VISIBILITY"] <= "1500" || ($rvr < "1500")) {
+            $bzo = 'REDUCED VISIBILITY PROCEDURES IN PROGRESS .. ';
+        } else if (preg_match('/BKN[0-9][0-9][0-9]/', $wx, $bknmatch)) {
+            $ceiling = substr($bknmatch[0], 3, 3);
+            if ($ceiling <= "1500") {
+                $bzo = 'REDUCED VISIBILITY PROCEDURES IN PROGRESS .. ';
+            } else {
+                $bzo = '';
+            }
+        } else if (preg_match('/OVC[0-9][0-9][0-9]/', $wx, $ovcmatch)) {
+            $ceiling = substr($ovcmatch[0], 3, 3);
+            if ($ceiling <= "003") {
+                $bzo = 'REDUCED VISIBILITY PROCEDURES IN PROGRESS .. ';
+            } else {
+                $bzo = '';
+            }
+        } else {
+            $bzo = '';
+        }
+
+        //Output
+        echo "THIS IS SCHIPHOL DEPARTURE INFORMATION " . $cycle . $deprwy . " .. TRANSITION LEVEL " . $trl . $weather . $trend . " .. OPERATIONAL REPORT .. " . $bzo . "NOISE ABATEMENT N-A-D-P 2 PROCEDURES SHALL BE APPLIED" . $own . " .. CONFIRM INFORMATION " . $cycle . " ON FIRST CONTACT";
+
+        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?version=D&arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&apt1=$apt2=&own=
+    } else if ($ap === "EHAM" && $version == "B") {
         define("app", [
             'sra' => ' .. SURVEILLANCE RADAR APPROACH',
             'rnp' => " .. RNP APPROACH",
@@ -808,7 +1007,7 @@ if (str_starts_with($ap, "EH")) {
 
         //Operational Reports
         // BZO
-        if ($currentweather["VISIBILITY"] < "550") {
+        if ($currentweather["VISIBILITY"] < "550" || ($rvr < "1500")) {
             $bzo = 'LOW VISIBILITY PROCEDURES IN PROGRESS .. ';
         } else if (preg_match('/BKN[0-9][0-9][0-9]/', $wx, $bknmatch)) {
             $ceiling = substr($bknmatch[0], 3, 3);
@@ -824,7 +1023,7 @@ if (str_starts_with($ap, "EH")) {
             } else {
                 $bzo = '';
             }
-        } else if ($currentweather["VISIBILITY"] <= "1500") {
+        } else if ($currentweather["VISIBILITY"] <= "1500" || ($rvr < "1500")) {
             $bzo = 'REDUCED VISIBILITY PROCEDURES IN PROGRESS .. ';
         } else if (preg_match('/BKN[0-9][0-9][0-9]/', $wx, $bknmatch)) {
             $ceiling = substr($bknmatch[0], 3, 3);
@@ -847,7 +1046,7 @@ if (str_starts_with($ap, "EH")) {
         //Output
         echo "THIS IS SCHIPHOL INFORMATION " . $cycle . $arrrwy . $deprwy . " .. TRANSITION LEVEL " . $trl . $weather . $trend . " .. OPERATIONAL REPORT .. " . $bzo . $parallelapproaches . $convergingapproaches . "CONTACT APPROACH AND ARRIVAL CALLSIGN ONLY .. NOISE ABATEMENT N-A-D-P 2 PROCEDURES SHALL BE APPLIED" . $own . " .. CONFIRM INFORMATION " . $cycle . " ON FIRST CONTACT";
 
-        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&apt1=$apt2=&own=
+        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?version=B&arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&apt1=$apt2=&own=
     } else if ($ap === "EHBK") {        
         if ($_GET['apt1'] === 'ix') {
             $app_type = ' .. ILS X RAY APPROACH ';
@@ -863,14 +1062,24 @@ if (str_starts_with($ap, "EH")) {
 
         $arrrwy = $_GET['arr'];
 
+        //Operational Reports
         //Runway Condition Report
         if (preg_match('/RA/', $wx)) {
-            $condrep = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET';
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET';
+        } else if (preg_match('/-DZ/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 50 PERCENT WET .. SECOND PART 50 PERCENT WET .. THIRD PART 50 PERCENT WET';
+        } else if (preg_match('/DZ/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET .. SECOND PART 75 PERCENT WET .. THIRD PART 75 PERCENT WET';
+        } else if (preg_match('/-SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART SNOW 1 MILLIMETER .. SECOND PART SNOW 1 MILLIMETER .. THIRD PART SNOW 1 MILLIMETER';
+        } else if (preg_match('/\+SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART SNOW 3 MILLIMETER .. SECOND PART SNOW 3 MILLIMETER .. THIRD PART SNOW 3 MILLIMETER';
+        } else if (preg_match('/SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART SNOW 2 MILLIMETER .. SECOND PART SNOW 2 MILLIMETER .. THIRD PART SNOW 2 MILLIMETER';
         } else {
-            $condrep = '';
+            $rwycondition = '';
         }
 
-        //Operational Reports
         // First Frequency
         if ($_GET['ff'] === 'twr') {
             $first_freq = ' .. FOR STARTUP CONTACT BEEK TOWER ON FREQUENCY 118.480 ';
@@ -926,9 +1135,9 @@ if (str_starts_with($ap, "EH")) {
         }
 
         //Output
-        echo "THIS IS MAASTRICHT AACHEN INFORMATION " . $cycle . " .. MAIN LANDING RUNWAY " . $arrrwy . $app_type . " .. TRANSITION LEVEL " . $trl . $condrep . $weather . $trend . $sitrep . $bzo . $own. $first_freq . " .. ACKNOWLEDGE INFORMATION " . $cycle;
+        echo "THIS IS MAASTRICHT AACHEN INFORMATION " . $cycle . " .. MAIN LANDING RUNWAY " . $arrrwy . $app_type . " .. TRANSITION LEVEL " . $trl . $rwycondition . $weather . $trend . $sitrep . $bzo . $own. $first_freq . " .. ACKNOWLEDGE INFORMATION " . $cycle;
 
-        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?arr=$arrrwy(EHBK)&wx=$metar(EHBK)&atis=$atiscode&apt1=&ff=&own=
+        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?version=B&arr=$arrrwy(EHBK)&wx=$metar(EHBK)&atis=$atiscode&apt1=&ff=&own=
     } else if ($ap === "EHEH") {
         define("app", [
             'x' => 'EXPECT C D O APPROACH TO ILS X RAY .. ',
@@ -942,37 +1151,23 @@ if (str_starts_with($ap, "EH")) {
         
         // Runway Condition Code
         if (preg_match('/\-SN/', $wx)) {
-            $rwycond = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW *100 PERCENT 1 MILLIMETER .. ';
+            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW *100 PERCENT 1 MILLIMETER .. ';
         } else if (preg_match('/\+SN/', $wx)) {
-            $rwycond = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW *100 PERCENT 3 MILLIMETERS .. ';
+            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW *100 PERCENT 3 MILLIMETERS .. ';
         } else if (preg_match('/SN/', $wx)) {
-            $rwycond = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW *100 PERCENT 2 MILLIMETERS .. ';
+            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW *100 PERCENT 2 MILLIMETERS .. ';
         } else if (preg_match('/\+SH/', $wx)) {
-            $rwycond = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT 2 MILLIMETER WET .. ';
+            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT 2 MILLIMETER WET .. ';
         } else if (preg_match('/RA|SH|DZ/', $wx)) {
-            $rwycond = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT 1 MILLIMETER WET .. ';
+            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $time . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT 1 MILLIMETER WET .. ';
         } else if (preg_match('/REDZ|RERA|RESH/', $wx)) {
-            $rwycond = 'RUNWAY CONDITION IS DAMP .. ';
+            $rwycondition = 'RUNWAY CONDITION IS DAMP .. ';
         } else {
-            $rwycond = 'RUNWAY CONDITION IS DRY .. ';
+            $rwycondition = 'RUNWAY CONDITION IS DRY .. ';
         }
 
         //Operational Reports
-        //  RVR
-        if (preg_match('/R[0-9]{2}\/[0-9]{4}[DNU]/', $wx, $rvrmatch)) {
-            $rvr = substr($rvrmatch[0], 0, 4);
-        } else {
-            $rvr = '9999';
-        }
-        
         // BZO
-        if (preg_match('/[0-9][0-9][0-9][0-9][DNU]/', $wx, $rvrmatch)) {
-            $rvr = substr($rvrmatch[0], 0, 4);
-        } else {
-            $rvr = '9999';
-        }
-        preg_match('/ [0-9][0-9][0-9][0-9] /', $wx, $visibilitymatch);
-        
         if ($currentweather["VISIBILITY"] <= "1500") {
             $bzo = ' .. LOW VISIBILITY PROCEDURES IN PROGRESS ';
         } else if ($rvr <= "1500") {
@@ -993,8 +1188,7 @@ if (str_starts_with($ap, "EH")) {
             }
         } else if (preg_match('/LVP/', $wx)) {
             $bzo = ' .. LOW VISIBILITY PROCEDURES IN PROGRESS';
-        }
-        else {
+        } else {
             $bzo = '';
         }
         
@@ -1005,9 +1199,9 @@ if (str_starts_with($ap, "EH")) {
         }
         
         //Output
-        echo  "THIS IS EINDHOVEN INFORMATION " . $cycle . " .. " . $time . " .. " . $app_type . "RUNWAY " . $arrrwy . " .. FOR ARRIVAL, AND DEPARTURE" . " .. " . $rwycond .  "TRANSITION LEVEL " . $trl . $own . $weather . $sitrep . $bzo . " .. CONFIRM EINDHOVEN INFORMATION " . $cycle . " ON FIRST CONTACT";
+        echo  "THIS IS EINDHOVEN INFORMATION " . $cycle . " .. " . $time . " .. " . $app_type . "RUNWAY " . $arrrwy . " .. FOR ARRIVAL, AND DEPARTURE" . " .. " . $rwycondition .  "TRANSITION LEVEL " . $trl . $own . $weather . $sitrep . $bzo . " .. CONFIRM EINDHOVEN INFORMATION " . $cycle . " ON FIRST CONTACT";
         
-        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?arr=$arrrwy(EHEH)&wx=$metar(EHEH)&atis=$atiscode&apt1=&own=
+        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?version=B&arr=$arrrwy(EHEH)&wx=$metar(EHEH)&atis=$atiscode&apt1=&own=
     } else if ($ap === "EHGG") {
         if ($_GET['apt1'] === 'i') {
             $app_type = 'ILS APPROACH .. ';
@@ -1028,8 +1222,16 @@ if (str_starts_with($ap, "EH")) {
         //Runway Condition Report
         if (preg_match('/RA/', $wx)) {
             $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET';
+        } else if (preg_match('/-DZ/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 50 PERCENT WET .. SECOND PART 50 PERCENT WET .. THIRD PART 50 PERCENT WET';
         } else if (preg_match('/DZ/', $wx)) {
             $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET .. SECOND PART 75 PERCENT WET .. THIRD PART 75 PERCENT WET';
+        } else if (preg_match('/-SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART SNOW 1 MILLIMETER .. SECOND PART SNOW 1 MILLIMETER .. THIRD PART SNOW 1 MILLIMETER';
+        } else if (preg_match('/\+SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART SNOW 3 MILLIMETER .. SECOND PART SNOW 3 MILLIMETER .. THIRD PART SNOW 3 MILLIMETER';
+        } else if (preg_match('/SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART SNOW 2 MILLIMETER .. SECOND PART SNOW 2 MILLIMETER .. THIRD PART SNOW 2 MILLIMETER';
         } else {
             $rwycondition = '';
         }
@@ -1077,7 +1279,7 @@ if (str_starts_with($ap, "EH")) {
         //Output
         echo "THIS IS EELDE INFORMATION " . $cycle . " .. MAIN LANDING RUNWAY " . $arrrwy . " .. " . $app_type . "TRANSITION LEVEL " . $trl . $rwycondition . $weather . $trend . $sitrep . $bzo . $own . " .. ACKNOWLEDGE INFORMATION " . $cycle;
         
-        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?arr=$arrrwy(EHGG)&wx=$metar(EHGG)&atis=$atiscode&apt1=&own=
+        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?version=B&arr=$arrrwy(EHGG)&wx=$metar(EHGG)&atis=$atiscode&apt1=&own=
     } else if ($ap === "EHKD") {
         define("app", [
             'ils' => ' .. EXPECT I L S APPROACH .. ',
@@ -1090,21 +1292,21 @@ if (str_starts_with($ap, "EH")) {
         
         // Runway Condition Code
         if (preg_match('/\-SN/', $wx)) {
-            $rwycond = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW 100 PERCENT 1 MILLIMETER .. ';
+            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW 100 PERCENT 1 MILLIMETER .. ';
         } else if (preg_match('/\+SN/', $wx)) {
-            $rwycond = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW 100 PERCENT 3 MILLIMETER .. ';
+            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW 100 PERCENT 3 MILLIMETER .. ';
         } else if (preg_match('/SN/', $wx)) {
-            $rwycond = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW 100 PERCENT 2 MILLIMETER .. ';
+            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW 100 PERCENT 2 MILLIMETER .. ';
         } else if (preg_match('/\+SH/', $wx)) {
-            $rwycond = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
+            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
         } else if (preg_match('/RA|SH|DZ/', $wx)) {
-            $rwycond = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
+            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
         } else if (preg_match('/-DZ/', $wx)) {
-            $rwycond = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. 75 PERCENT WET .. ';
+            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. 75 PERCENT WET .. ';
         } else if (preg_match('/REDZ|RERA|RESH/', $wx)) {
-            $rwycond = 'RUNWAY CONDITION IS DAMP .. ';
+            $rwycondition = 'RUNWAY CONDITION IS DAMP .. ';
         } else {
-            $rwycond = 'RUNWAY CONDITION IS DRY .. ';
+            $rwycondition = 'RUNWAY CONDITION IS DRY .. ';
         }
         
         //Operational Reports
@@ -1139,9 +1341,9 @@ if (str_starts_with($ap, "EH")) {
         }
         
         //Output
-        echo "THIS IS DE KOOY INFORMATION " . $cycle . " .. " . $time . $app_type . "RUNWAY " . $arrrwy . " .. FOR ARRIVAL, AND DEPARTURE" . " .. " . $rwycond . "TRANSITION LEVEL " . $trl . $own . " .. BIRD STATUS ALERT" . $bzo . $weather . " .. CONFIRM INFORMATION " . $cycle . " ON FIRST CONTACT";
+        echo "THIS IS DE KOOY INFORMATION " . $cycle . " .. " . $time . $app_type . "RUNWAY " . $arrrwy . " .. FOR ARRIVAL, AND DEPARTURE" . " .. " . $rwycondition . "TRANSITION LEVEL " . $trl . $own . " .. BIRD STATUS ALERT" . $bzo . $weather . " .. CONFIRM INFORMATION " . $cycle . " ON FIRST CONTACT";
         
-        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?arr=$arrrwy(EHKD)&wx=$metar(EHKD)&atis=$atiscode&apt1=&own=
+        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?version=B&arr=$arrrwy(EHKD)&wx=$metar(EHKD)&atis=$atiscode&apt1=&own=
     } else if ($ap === "EHLE") {
         
         if ($_GET['apt1'] === 'i') {
@@ -1185,9 +1387,9 @@ if (str_starts_with($ap, "EH")) {
         }
         
         //Output
-        echo "THIS IS LELYSTAD INFORMATION " . $cycle . " .. MAIN LANDING RUNWAY " . $arrrwy . " .. " . $app_type . " REPORT FULL INTENTIONS AT START UP .. TRANSITION LEVEL " . $trl . " .. " . $weather . $trend . $sitrep . $bzo . $own . " .. ACKNOWLEDGE INFORMATION " . $cycle;
+        echo "THIS IS LELYSTAD INFORMATION " . $cycle . " .. MAIN LANDING RUNWAY " . $arrrwy . " .. " . $app_type . " REPORT FULL INTENTIONS AT START UP .. TRANSITION LEVEL " . $trl . $weather . $trend . $sitrep . $bzo . $own . " .. ACKNOWLEDGE INFORMATION " . $cycle;
         
-        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?arr=$arrrwy(EHLE)&wx=$metar(EHLE)&atis=$atiscode&apt1=&own=
+        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?version=B&arr=$arrrwy(EHLE)&wx=$metar(EHLE)&atis=$atiscode&apt1=&own=
     } else if ($ap === "EHRD") {
         if ($_GET['apt1'] === 'i') {
             $app_type = 'ILS APPROACH .. ';
@@ -1204,14 +1406,20 @@ if (str_starts_with($ap, "EH")) {
         $arrrwy = $_GET['arr'];
         
         //Runway Condition Report
-        if (preg_match('/\+SH/', $wx)) {
-            $condrep = " .. RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. ENTIRE RUNWAY 100 PERCENT WET";
-        } else if (preg_match('/SH|RA|DZ/', $wx)) {
-            $condrep = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. ENTIRE RUNWAY 1 0 0 PERCENT WET';
-        } else if (preg_match('/-SN|SN/', $wx)) {
-            $condrep = " .. RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 4 4 4 .. ENTIRE RUNWAY 100 PERCENT SNOW 1 MILIMETER";
+        if (preg_match('/RA/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET';
+        } else if (preg_match('/-DZ/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 50 PERCENT WET .. SECOND PART 50 PERCENT WET .. THIRD PART 50 PERCENT WET';
+        } else if (preg_match('/DZ/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET .. SECOND PART 75 PERCENT WET .. THIRD PART 75 PERCENT WET';
+        } else if (preg_match('/-SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART SNOW 1 MILLIMETER .. SECOND PART SNOW 1 MILLIMETER .. THIRD PART SNOW 1 MILLIMETER';
+        } else if (preg_match('/\+SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART SNOW 3 MILLIMETER .. SECOND PART SNOW 3 MILLIMETER .. THIRD PART SNOW 3 MILLIMETER';
+        } else if (preg_match('/SN/', $wx)) {
+            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART SNOW 2 MILLIMETER .. SECOND PART SNOW 2 MILLIMETER .. THIRD PART SNOW 2 MILLIMETER';
         } else {
-            $condrep = '';
+            $rwycondition = '';
         }
 
         //LOW QNH
@@ -1254,9 +1462,9 @@ if (str_starts_with($ap, "EH")) {
         }
         
         //Output
-        echo "THIS IS ROTTERDAM INFORMATION " . $cycle . " .. " . " MAIN LANDING RUNWAY " . $arrrwy . " .. " . $app_type . "TRANSITION LEVEL " . $trl . $lowqnh . $condrep . " .. " . $weather . $trend . $sitrep . $bzo . $own . " .. ACKNOWLEDGE INFORMATION " . $cycle;
+        echo "THIS IS ROTTERDAM INFORMATION " . $cycle . " .. " . " MAIN LANDING RUNWAY " . $arrrwy . " .. " . $app_type . "TRANSITION LEVEL " . $trl . $lowqnh . $rwycondition . " .. " . $weather . $trend . $sitrep . $bzo . $own . " .. ACKNOWLEDGE INFORMATION " . $cycle;
         
-        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?arr=$arrrwy(EHRD)&wx=$metar(EHRD)&atis=$atiscode&apt1=&own=
+        //EUROSCOPE Link: http://www.olafblom.nl/atis/atis.php?version=B&arr=$arrrwy(EHRD)&wx=$metar(EHRD)&atis=$atiscode&apt1=&own=
     } else {
         echo "NO ATIS AVAILABLE FOR THIS AIRPORT";
     }
