@@ -43,7 +43,7 @@ if ($currentweather["VV"] == "") {
     $weather .= " .. VERTICAL VISIBILITY *" . $currentweather["VV"] . " FEET";
 }
 
-if ($currentweather["RVR"]) {
+if ($currentweather["RVR"] && (str_starts_with($ap, 'EH'))) {
     $weather .= " .. RVR AVAILABLE ON ATC FREQUENCY";
 }
 
