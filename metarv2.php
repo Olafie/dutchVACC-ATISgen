@@ -52,7 +52,34 @@ foreach ($trendsplit as $items) {
     }
 
     foreach ($items as $item) {
-        if (preg_match('/^[0-9]{5}KT$/', $item) || preg_match('/^VRB[0-9]{2}KT$/', $item) || preg_match('/^[0-9]{5}G[0-9]{2}KT$/', $item) || preg_match('/^VRB[0-9]{2}G[0-9]{2}KT$/', $item)) {
+        if (preg_match('/^R[0-9]{2}/', $item)) {
+            $currentweather["RVR"] = true;
+            if (preg_match('/P[0-9]{4}[DNU]$/', $item)) {
+                array_push($currentweather["RVRVALUES"], array(
+                    "RWY" => substr($item, 1, strpos($item, '/')-1),
+                    "PLUS" => true,
+                    "LESS" => false,
+                    "VIS" => intval(substr($item, strpos($item, 'P')+1, 4)),
+                    "TREND" => substr($item, strpos($item, 'P')+5),
+                ));
+            } else if (preg_match('/M[0-9]{4}[DNU]$/', $item)) {
+                array_push($currentweather["RVRVALUES"], array(
+                    "RWY" => substr($item, 1, strpos($item, '/')-1),
+                    "PLUS" => false,
+                    "LESS" => true,
+                    "VIS" => intval(substr($item, strpos($item, 'M')+1, 4)),
+                    "TREND" => substr($item, strpos($item, 'M')+5),
+                ));
+            } else if (preg_match('/[0-9]{4}[DNU]$/', $item)) {
+                array_push($currentweather["RVRVALUES"], array(
+                    "RWY" => substr($item, 1, strpos($item, '/')-1),
+                    "PLUS" => false,
+                    "LESS" => false,
+                    "VIS" => intval(substr($item, strpos($item, '/')+1, 4)),
+                    "TREND" => substr($item, strpos($item, '/')+5),
+                ));
+            }
+        } else if (preg_match('/^[0-9]{5}KT$/', $item) || preg_match('/^VRB[0-9]{2}KT$/', $item) || preg_match('/^[0-9]{5}G[0-9]{2}KT$/', $item) || preg_match('/^VRB[0-9]{2}G[0-9]{2}KT$/', $item)) {
             if ($trendtype === "CURRENT") {
                 if (str_starts_with($item, "VRB")) {
                     $currentweather["WIND"]["DIR"] = "VARIABLE";
@@ -111,33 +138,6 @@ foreach ($trendsplit as $items) {
             $tempdp = explode('/', $item);
             $currentweather["TEMPERATURE"] = intval(str_replace("M", "-", $tempdp[0]));
             $currentweather["DEWPOINT"] = intval(str_replace("M", "-", $tempdp[1]));
-        } else if (preg_match('/R[0-9]{2}/', $item)) {
-            $currentweather["RVR"] = true;
-            if (preg_match('/\/[0-9]{4}/', $item)) {
-                array_push($currentweather["RVRVALUES"], array(
-                    "RWY" => substr($item, 1, strpos($item, '/')-1),
-                    "PLUS" => false,
-                    "LESS" => false,
-                    "VIS" => intval(substr($item, strpos($item, '/')+1, 4)),
-                    "TREND" => substr($item, strpos($item, '/')+5),
-                ));
-            } else if (preg_match('/\/M[0-9]{4}/', $item)) {
-                array_push($currentweather["RVRVALUES"], array(
-                    "RWY" => substr($item, 1, strpos($item, '/')-1),
-                    "PLUS" => false,
-                    "LESS" => true,
-                    "VIS" => intval(substr($item, strpos($item, 'M')+1, 4)),
-                    "TREND" => substr($item, strpos($item, 'M')+5),
-                ));
-            } else if (preg_match('/\/P[0-9]{4}/', $item)) {
-                array_push($currentweather["RVRVALUES"], array(
-                    "RWY" => substr($item, 1, strpos($item, '/')-1),
-                    "PLUS" => true,
-                    "LESS" => false,
-                    "VIS" => intval(substr($item, strpos($item, 'P')+1, 4)),
-                    "TREND" => substr($item, strpos($item, 'P')+5),
-                ));
-            }
         } else if (preg_match('/VV[0-9]{3}/', $item)) {
             $currentweather["VV"] = intval(substr($item, 2, 3)) * 100;
         } else if (preg_match('/NSC/', $item)) {
@@ -214,10 +214,10 @@ foreach ($trendsplit as $items) {
                 array_push($tempoweather["PHENOMENA"], $item);
             }
         }
-        //echo $item . '<br>';
+        echo $item . '<br>';
     }
 }
 
-//print_r($currentweather["RVRVALUES"]);
-//echo "<br>" . $currentweather["RVR"] . "<br>";
+print_r($currentweather["RVRVALUES"]);
+echo "<br>" . $currentweather["RVR"] . "<br>";
 ?>
