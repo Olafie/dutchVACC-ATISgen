@@ -52,7 +52,7 @@ foreach ($trendsplit as $items) {
     }
 
     foreach ($items as $item) {
-        if (preg_match('/^R[0-9]{2}/', $item)) {
+        if (preg_match('/^R[0-9]{2}[CLR]*\//', $item)) {
             $currentweather["RVR"] = true;
             if (preg_match('/P[0-9]{4}[DNU]$/', $item)) {
                 array_push($currentweather["RVRVALUES"], array(
@@ -134,12 +134,18 @@ foreach ($trendsplit as $items) {
             }
         } else if (preg_match('/^Q[0-9]{4}$/', $item)) {
             $currentweather["QNH"] = intval(substr($item, 1, 4));
-        } else if (preg_match('/[M]*[0-9]{2}\/[M]*[0-9]{2}/', $item)) {
+        } else if (preg_match('/^[M]*[0-9]{2}\/[M]*[0-9]{2}$/', $item)) {
             $tempdp = explode('/', $item);
             $currentweather["TEMPERATURE"] = intval(str_replace("M", "-", $tempdp[0]));
             $currentweather["DEWPOINT"] = intval(str_replace("M", "-", $tempdp[1]));
         } else if (preg_match('/VV[0-9]{3}/', $item)) {
-            $currentweather["VV"] = intval(substr($item, 2, 3)) * 100;
+            if ($trendtype === "CURRENT") {
+                $currentweather["VV"] = intval(substr($item, 2, 3)) * 100;
+            } else if ($trendtype === "BECOMING") {
+                $becmgweather["VV"] = intval(substr($item, 2, 3)) * 100;
+            } else if ($trendtype === "TEMPORARY") {
+                $tempoweather["VV"] = intval(substr($item, 2, 3)) * 100;
+            }
         } else if (preg_match('/NSC/', $item)) {
             if ($trendtype === "CURRENT") {
                 $currentweather["NSC"] = true;
@@ -184,6 +190,7 @@ foreach ($trendsplit as $items) {
             $time = substr($item, 2, 4);
         } else if (preg_match('/^EH[A-Z]{2}$/', $item)) {
             $ap = $item;
+        } else if (preg_match('/^ALPHA|^ALFA|^BRAVO|^CHARLIE|^DELTA/', $item)) {
         } else if (preg_match('/FEW|SCT|BKN|OVC/', $item)) {
             if ($trendtype === "CURRENT") {
                 array_push($currentweather["CLOUDS"], array(
@@ -219,5 +226,5 @@ foreach ($trendsplit as $items) {
 }
 
 //print_r($currentweather["RVRVALUES"]);
-//echo "<br>" . $currentweather["RVR"] . "<br>";
+//echo "<br>" . $currentweather["LOWESTRVR"] . "<br>";
 ?>
