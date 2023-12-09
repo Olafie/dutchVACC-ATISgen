@@ -314,125 +314,125 @@ if ($tempoweather["AVAILABLE"]) {
         $trend .= " .. NO SIGNIFICANT CLOUDS";
     }
 
-    foreach ($tempoweather["PHENOMENA"] as $phenomenon) {
+    foreach ($tempoweather["PHENOMENA"] as $tempophenomenon) {
         $trend .= " .. ";
     
-        if (str_contains($phenomenon, '-')) {
+        if (str_contains($tempophenomenon, '-')) {
             $trend .= 'LIGHT ';
         }
-        if (str_contains($phenomenon, '+')) {
+        if (str_contains($tempophenomenon, '+')) {
             $trend .= 'HEAVY ';
         }
     
-        if (preg_match('/FZ/', $phenomenon)) {
+        if (preg_match('/FZ/', $tempophenomenon)) {
             $trend .= 'FREEZING ';
         }
     
-        if (preg_match('/TS/', $phenomenon)) {
+        if (preg_match('/TS/', $tempophenomenon)) {
             $trend .= 'THUNDERSTORM ';
         }
     
-        if (preg_match('/MI/', $phenomenon)) {
+        if (preg_match('/MI/', $tempophenomenon)) {
             $trend .= 'SHALLOW ';
         }
     
-        if (preg_match('/BL/', $phenomenon)) {
+        if (preg_match('/BL/', $tempophenomenon)) {
             $trend .= 'BLOWING ';
         }
     
-        if (preg_match('/DR/', $phenomenon)) {
+        if (preg_match('/DR/', $tempophenomenon)) {
             $trend .= 'LOW DRIFTING ';
         }
     
-        if (preg_match('/PR/', $phenomenon)) {
+        if (preg_match('/PR/', $tempophenomenon)) {
             $trend .= 'PARTIAL ';
         }
     
-        if (preg_match('/BC/', $phenomenon)) {
+        if (preg_match('/BC/', $tempophenomenon)) {
             $trend .= 'PATCHES OF ';
         }
     
-        if (preg_match('/GR/', $phenomenon)) {
+        if (preg_match('/GR/', $tempophenomenon)) {
             $trend .= 'HAIL ';
         }
     
-        if (preg_match('/GS/', $phenomenon)) {
+        if (preg_match('/GS/', $tempophenomenon)) {
             $trend .= 'SMALL HAIL ';
         }
     
-        if (preg_match('/PL/', $phenomenon)) {
+        if (preg_match('/PL/', $tempophenomenon)) {
             $trend .= 'ICE PELLETS ';
         }
     
-        if (preg_match('/IC/', $phenomenon)) {
+        if (preg_match('/IC/', $tempophenomenon)) {
             $trend .= 'ICE CRYSTALS ';
         }
     
-        if (preg_match('/SG/', $phenomenon)) {
+        if (preg_match('/SG/', $tempophenomenon)) {
             $trend .= 'SNOW GRAINS ';
         }
         
-        if (preg_match('/DZRA/', $phenomenon)) {
+        if (preg_match('/DZRA/', $tempophenomenon)) {
             $trend .= 'DRIZZLE RAIN ';
-        } else if (preg_match('/RADZ/', $phenomenon)) {
+        } else if (preg_match('/RADZ/', $tempophenomenon)) {
             $trend .= 'RAIN DRIZZLE ';
-        } else if (preg_match('/SHRA/', $phenomenon)) {
+        } else if (preg_match('/SHRA/', $tempophenomenon)) {
             $trend .= 'SHOWERS OF RAIN ';
-        } else if (preg_match('/RA/', $phenomenon)) {
+        } else if (preg_match('/RA/', $tempophenomenon)) {
             $trend .= 'RAIN ';
-        } else if (preg_match('/DZ/', $phenomenon)) {
+        } else if (preg_match('/DZ/', $tempophenomenon)) {
             $trend .= 'DRIZZLE ';
         }
     
-        if (preg_match('/BR/', $phenomenon)) {
+        if (preg_match('/BR/', $tempophenomenon)) {
             $trend .= 'MIST ';
         }
     
-        if (preg_match('/DS/', $phenomenon)) {
+        if (preg_match('/DS/', $tempophenomenon)) {
             $trend .= 'DUST STORM ';
         }
     
-        if (preg_match('/DU/', $phenomenon)) {
+        if (preg_match('/DU/', $tempophenomenon)) {
             $trend .= 'WIDESPREAD DUST ';
         }
     
-        if (preg_match('/FC/', $phenomenon)) {
+        if (preg_match('/FC/', $tempophenomenon)) {
             $trend .= 'FUNNEL CLOUD ';
         }
     
-        if (preg_match('/FG/', $phenomenon)) {
+        if (preg_match('/FG/', $tempophenomenon)) {
             $trend .= 'FOG ';
         }
 
-        if (preg_match('/FU/', $phenomenon)) {
+        if (preg_match('/FU/', $tempophenomenon)) {
             $trend .= 'SMOKE ';
         }
 
-        if (preg_match('/HZ/', $phenomenon)) {
+        if (preg_match('/HZ/', $tempophenomenon)) {
             $trend .= 'HAZE ';
         }
 
-        if (preg_match('/PY/', $phenomenon)) {
+        if (preg_match('/PY/', $tempophenomenon)) {
             $trend .= 'SPRAY ';
         }
     
-        if (preg_match('/SA/', $phenomenon)) {
+        if (preg_match('/SA/', $tempophenomenon)) {
             $trend .= 'SAND ';
         }
     
-        if (preg_match('/SN/', $phenomenon)) {
+        if (preg_match('/SN/', $tempophenomenon)) {
             $trend .= 'SNOW ';
         }
     
-        if (preg_match('/SS/', $phenomenon)) {
+        if (preg_match('/SS/', $tempophenomenon)) {
             $trend .= 'SANDSTORM ';
         }
     
-        if (preg_match('/SQ/', $phenomenon)) {
+        if (preg_match('/SQ/', $tempophenomenon)) {
             $trend .= 'SQUALL ';
         }
     
-        if (preg_match('/UP/', $phenomenon)) {
+        if (preg_match('/UP/', $tempophenomenon)) {
             $trend .= 'UNKNOWN PRECIPITATION ';
         }
     }
@@ -523,129 +523,129 @@ if ($becmgweather["AVAILABLE"]) {
         $trend .= " .. NO SIGNIFICANT CLOUDS";
     }
 
-foreach ($becmgweather["PHENOMENA"] as $phenomenon) {
+foreach ($becmgweather["PHENOMENA"] as $becmgphenomenon) {
     $trend .= " .. ";
 
-    if (str_contains($phenomenon, '-')) {
+    if (str_contains($becmgphenomenon, '-')) {
         $trend .= 'LIGHT ';
     }
-    if (str_contains($phenomenon, '+')) {
+    if (str_contains($becmgphenomenon, '+')) {
         $trend .= 'HEAVY ';
     }
     
-    if (preg_match('/FZ/', $phenomenon)) {
+    if (preg_match('/FZ/', $becmgphenomenon)) {
         $trend .= 'FREEZING ';
     }
 
-    if (preg_match('/TS/', $phenomenon)) {
+    if (preg_match('/TS/', $becmgphenomenon)) {
         $trend .= 'THUNDERSTORM ';
     }
 
-    if (preg_match('/MI/', $phenomenon)) {
+    if (preg_match('/MI/', $becmgphenomenon)) {
         $trend .= 'SHALLOW ';
     }
 
-    if (preg_match('/BL/', $phenomenon)) {
+    if (preg_match('/BL/', $becmgphenomenon)) {
         $trend .= 'BLOWING ';
     }
 
-    if (preg_match('/DR/', $phenomenon)) {
+    if (preg_match('/DR/', $becmgphenomenon)) {
         $trend .= 'LOW DRIFTING ';
     }
 
-    if (preg_match('/PR/', $phenomenon)) {
+    if (preg_match('/PR/', $becmgphenomenon)) {
         $trend .= 'PARTIAL ';
     }
 
-    if (preg_match('/BC/', $phenomenon)) {
+    if (preg_match('/BC/', $becmgphenomenon)) {
         $trend .= 'PATCHES OF ';
     }
 
-    if (preg_match('/GR/', $phenomenon)) {
+    if (preg_match('/GR/', $becmgphenomenon)) {
         $trend .= 'HAIL ';
     }
 
-    if (preg_match('/GS/', $phenomenon)) {
+    if (preg_match('/GS/', $becmgphenomenon)) {
         $trend .= 'SMALL HAIL ';
     }
 
-    if (preg_match('/PL/', $phenomenon)) {
+    if (preg_match('/PL/', $becmgphenomenon)) {
         $trend .= 'ICE PELLETS ';
     }
 
-    if (preg_match('/IC/', $phenomenon)) {
+    if (preg_match('/IC/', $becmgphenomenon)) {
         $trend .= 'ICE CRYSTALS ';
     }
 
-    if (preg_match('/SG/', $phenomenon)) {
+    if (preg_match('/SG/', $becmgphenomenon)) {
         $trend .= 'SNOW GRAINS ';
     }
 
-    if (preg_match('/DZRA/', $phenomenon)) {
+    if (preg_match('/DZRA/', $becmgphenomenon)) {
         $trend .= 'DRIZZLE RAIN ';
-    } else if (preg_match('/RADZ/', $phenomenon)) {
+    } else if (preg_match('/RADZ/', $becmgphenomenon)) {
         $trend .= 'RAIN DRIZZLE ';
-    } else if (preg_match('/SHRA/', $phenomenon)) {
+    } else if (preg_match('/SHRA/', $becmgphenomenon)) {
         $trend .= 'SHOWERS OF RAIN ';
-    } else if (preg_match('/RA/', $phenomenon)) {
+    } else if (preg_match('/RA/', $becmgphenomenon)) {
         $trend .= 'RAIN ';
-    } else if (preg_match('/DZ/', $phenomenon)) {
+    } else if (preg_match('/DZ/', $becmgphenomenon)) {
         $trend .= 'DRIZZLE ';
     }
 
-    if (preg_match('/BR/', $phenomenon)) {
+    if (preg_match('/BR/', $becmgphenomenon)) {
         $trend .= 'MIST ';
     }
 
-    if (preg_match('/DS/', $phenomenon)) {
+    if (preg_match('/DS/', $becmgphenomenon)) {
         $trend .= 'DUST STORM ';
     }
 
-    if (preg_match('/DU/', $phenomenon)) {
+    if (preg_match('/DU/', $becmgphenomenon)) {
         $trend .= 'WIDESPREAD DUST ';
     }
 
-    if (preg_match('/FC/', $phenomenon)) {
+    if (preg_match('/FC/', $becmgphenomenon)) {
         $trend .= 'FUNNEL CLOUD ';
     }
 
-    if (preg_match('/FG/', $phenomenon)) {
+    if (preg_match('/FG/', $becmgphenomenon)) {
         $trend .= 'FOG ';
     }
 
-    if (preg_match('/FU/', $phenomenon)) {
+    if (preg_match('/FU/', $becmgphenomenon)) {
         $trend .= 'SMOKE ';
     }
 
-    if (preg_match('/HZ/', $phenomenon)) {
+    if (preg_match('/HZ/', $becmgphenomenon)) {
         $trend .= 'HAZE ';
     }
 
-    if (preg_match('/PO/', $phenomenon)) {
+    if (preg_match('/PO/', $becmgphenomenon)) {
         $trend .= 'DUST ';
     }
 
-    if (preg_match('/PY/', $phenomenon)) {
+    if (preg_match('/PY/', $becmgphenomenon)) {
         $trend .= 'SPRAY ';
     }
 
-    if (preg_match('/SA/', $phenomenon)) {
+    if (preg_match('/SA/', $becmgphenomenon)) {
         $trend .= 'SAND ';
     }
 
-    if (preg_match('/SN/', $phenomenon)) {
+    if (preg_match('/SN/', $becmgphenomenon)) {
         $trend .= 'SNOW ';
     }
 
-    if (preg_match('/SS/', $phenomenon)) {
+    if (preg_match('/SS/', $becmgphenomenon)) {
         $trend .= 'SANDSTORM ';
     }
 
-    if (preg_match('/SQ/', $phenomenon)) {
+    if (preg_match('/SQ/', $becmgphenomenon)) {
         $trend .= 'SQUALL ';
     }
 
-    if (preg_match('/UP/', $phenomenon)) {
+    if (preg_match('/UP/', $becmgphenomenon)) {
         $trend .= 'UNKNOWN PRECIPITATION ';
     }
 }
@@ -741,60 +741,65 @@ if (str_starts_with($ap, "EH")) {
     $arrrwy = $_GET['arr'];
 
     // Runway Condition Reports
-    if ($ap == "EHEH") {
-        if (preg_match('/\-SN/', $metar)) {
-            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW *100 PERCENT 4 MILLIMETERS';
-        } else if (preg_match('/\+SN/', $metar)) {
-            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. SNOW *100 PERCENT 12 MILLIMETERS';
-        } else if (preg_match('/SN/', $metar)) {
-            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW *100 PERCENT 8 MILLIMETERS';
-        } else if (preg_match('/\+SH/', $metar)) {
-            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET';
-        } else if (preg_match('/RA|SH|DZ/', $metar)) {
-            $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET';
-        } else if (preg_match('/REDZ|RERA|RESH/', $metar)) {
-            $rwycondition = 'RUNWAY CONDITION IS DAMP .. ';
+    foreach ($currentweather["PHENOMENA"] as $phenomenon) {
+        if ($ap == "EHEH") {
+            if (preg_match('/RA/', $phenomenon) && preg_match('/SN/', $phenomenon)) {
+                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. WET SNOW *100 PERCENT 6 MILLIMETERS';
+            } else if (preg_match('/^\-SN/', $phenomenon)) {
+                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. DRY SNOW *100 PERCENT 4 MILLIMETERS';
+            } else if (preg_match('/^\+SN/', $phenomenon)) {
+                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. DRY SNOW *100 PERCENT 12 MILLIMETERS';
+            } else if (preg_match('/SN/', $phenomenon)) {
+                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. DRY SNOW *100 PERCENT 8 MILLIMETERS';
+            } else if (preg_match('/^\+SH/', $phenomenon)) {
+                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET';
+            } else if (preg_match('/^RA|^SH|^DZ/', $phenomenon)) {
+                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET';
+            } else {
+                $rwycondition = 'RUNWAY CONDITION IS DRY';
+            }
+        } else if ($ap == "EHKD") {
+            if (preg_match('/\-SN/', $phenomenon)) {
+                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW 100 PERCENT 4 MILLIMETERS .. ';
+            } else if (preg_match('/\+SN/', $phenomenon)) {
+                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. SNOW 100 PERCENT 12 MILLIMETERS .. ';
+            } else if (preg_match('/SN/', $phenomenon)) {
+                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW 100 PERCENT 8 MILLIMETERS .. ';
+            } else if (preg_match('/\+SH/', $phenomenon)) {
+                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
+            } else if (preg_match('/RA|SH|DZ/', $phenomenon)) {
+                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
+            } else if (preg_match('/-DZ/', $phenomenon)) {
+                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. 75 PERCENT WET .. ';
+            } else {
+                $rwycondition = 'RUNWAY CONDITION IS DRY .. ';
+            }
         } else {
-            $rwycondition = 'RUNWAY CONDITION IS DRY .. ';
+            if (preg_match('/^SN/', $phenomenon) || preg_match('/SHSN$/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART 8 MILLIMETERS DRY SNOW .. SECOND PART 8 MILLIMETERS DRY SNOW .. THIRD PART 8 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
+            } else if (preg_match('/RA/', $phenomenon) && preg_match('/SN/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART 6 MILLIMETERS WET SNOW .. SECOND PART 6 MILLIMETERS WET SNOW .. THIRD PART 6 MILLIMETERS WET SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
+            } else if (preg_match('/^\-SN/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 4 MILLIMETERS DRY SNOW .. SECOND PART 4 MILLIMETERS DRY SNOW .. THIRD PART 4 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
+            } else if (preg_match('/^\+SN/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. FIRST PART 12 MILLIMETERS DRY SNOW .. SECOND PART 12 MILLIMETERS DRY SNOW .. THIRD PART 12 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
+            } else if (preg_match('/M[0-9]{2}\//', $metar) && preg_match('/FG/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 100 PERCENT, FROST .. SECOND PART *100 PERCENT, FROST .. THIRD PART *100 PERCENT, FROST .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR';
+            } else if (preg_match('/RA/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET';
+            } else if (preg_match('/-DZ/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 50 PERCENT WET .. SECOND PART 50 PERCENT WET .. THIRD PART 50 PERCENT WET';
+            } else if (preg_match('/DZ/', $phenomenon)) {
+                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET .. SECOND PART 75 PERCENT WET .. THIRD PART 75 PERCENT WET';
+            } else {
+                $rwycondition = '';
+            }
         }
-    } else if ($ap == "EHKD") {
-        if (preg_match('/\-SN/', $metar)) {
-            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW 100 PERCENT 4 MILLIMETERS .. ';
-        } else if (preg_match('/\+SN/', $metar)) {
-            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. SNOW 100 PERCENT 12 MILLIMETERS .. ';
-        } else if (preg_match('/SN/', $metar)) {
-            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW 100 PERCENT 8 MILLIMETERS .. ';
-        } else if (preg_match('/\+SH/', $metar)) {
-            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
-        } else if (preg_match('/RA|SH|DZ/', $metar)) {
-            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
-        } else if (preg_match('/-DZ/', $metar)) {
-            $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. 75 PERCENT WET .. ';
-        } else if (preg_match('/REDZ|RERA|RESH/', $metar)) {
-            $rwycondition = 'RUNWAY CONDITION IS DAMP .. ';
-        } else {
-            $rwycondition = 'RUNWAY CONDITION IS DRY .. ';
-        }
-    } else if ($ap !== "EHAM") {
-        if (preg_match('/RA/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET';
-        } else if (preg_match('/-DZ/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 50 PERCENT WET .. SECOND PART 50 PERCENT WET .. THIRD PART 50 PERCENT WET';
-        } else if (preg_match('/DZ/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET .. SECOND PART 75 PERCENT WET .. THIRD PART 75 PERCENT WET';
-        } else if (preg_match('/^\-SN/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 4 MILLIMETERS DRY SNOW .. SECOND PART 4 MILLIMETERS DRY SNOW .. THIRD PART 4 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-        } else if (preg_match('/^\+SN/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. FIRST PART 12 MILLIMETERS DRY SNOW .. SECOND PART 12 MILLIMETERS DRY SNOW .. THIRD PART 12 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-        } else if (preg_match('/^SN/', $metar) || preg_match('/SHSN$/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART 8 MILLIMETERS DRY SNOW .. SECOND PART 8 MILLIMETERS DRY SNOW .. THIRD PART 8 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-        } else if (preg_match('/RA/', $metar) && preg_match('/SN/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART 6 MILLIMETERS WET SNOW .. SECOND PART 6 MILLIMETERS WET SNOW .. THIRD PART 6 MILLIMETERS WET SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-        } else if (preg_match('/M[0-9]{2}\//', $metar) && preg_match('/FG/', $metar)) {
-            $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 100 PERCENT, FROST .. SECOND PART *100 PERCENT, FROST .. THIRD PART *100 PERCENT, FROST .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR';
-        } else {
-            $rwycondition = '';
-        }
+    }
+    if ($ap == "EHEH" || $ap == "EHKD") {
+        $rwycondition = 'RUNWAY CONDITION IS DRY';
+    } else {
+        $rwycondition = '';
     }
 
     if ($ap === "EHAM" && $version == "A") {
@@ -943,7 +948,7 @@ if (str_starts_with($ap, "EH")) {
         //Output
         echo "THIS IS SCHIPHOL ARRIVAL INFORMATION " . $cycle . $arrrwy . $deprwy . " .. TRANSITION LEVEL " . $trl . $weather . $trend . " .. OPERATIONAL REPORT .. " . $bzo . $parallelapproaches . $convergingapproaches . $cs_only . $own . "CONFIRM INFORMATION " . $cycle . " ON FIRST CONTACT";
 
-        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?version=A&arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&apt1=&$apt2=&own=
+        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?version=A&arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&apt1=&apt2=&own=
     } else if ($ap === "EHAM" && $version == "D") {
         //Preferential Runway System - Departures
         $dep = $_GET['dep'];
@@ -1066,7 +1071,7 @@ if (str_starts_with($ap, "EH")) {
         //Output
         echo "THIS IS SCHIPHOL DEPARTURE INFORMATION " . $cycle . $deprwy . $arrrwy . " .. TRANSITION LEVEL " . $trl . $weather . $trend . " .. OPERATIONAL REPORT .. " . $paralleldeps . $bzo . "NOISE ABATEMENT N-A-D-P 2 PROCEDURES SHALL BE APPLIED" . $own . " .. CONFIRM INFORMATION " . $cycle . " ON FIRST CONTACT";
 
-        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?version=D&arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&own=
+        //EUROSCOPE Link: https://olafblom.nl/atis/atis.php?version=D&arr=$arrrwy(EHAM)&dep=$deprwy(EHAM)&wx=$metar(EHAM)&atis=$atiscode&apt1=&apt2=&own=
     } else if ($ap === "EHAM") {
         define("app", [
             'sra' => ' .. SURVEILLANCE RADAR APPROACH',
@@ -1244,7 +1249,7 @@ if (str_starts_with($ap, "EH")) {
         }
 
         //CONTACT APP/ARR CALLSIGN ONLY
-        if ((in_array("EHAM_W_APP", $onlineATC) || in_array("EHAM__W_APP", $onlineATC) || in_array("EHAM_W__APP", $onlineATC)) && (in_array("EHAM_A_APP", $onlineATC) || in_array("EHAM__A_APP", $onlineATC) || in_array("EHAM_A__APP", $onlineATC))) {
+        if ((in_array("EHAM_A_APP", $onlineATC) || in_array("EHAM__A_APP", $onlineATC) || in_array("EHAM_A__APP", $onlineATC))) {
             $cs_only = "CONTACT APPROACH AND ARRIVAL CALLSIGN ONLY .. ";
         } else {
             $cs_only = "CONTACT APPROACH CALLSIGN ONLY .. ";

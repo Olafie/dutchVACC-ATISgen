@@ -31,6 +31,7 @@ $currentweather = array(
     "SKC" => false,
     "CAVOK" => false,
     "AVAILABLE" => false,
+    "AUTOMATIC" => false,
 );
 $becmgweather = $currentweather;
 $tempoweather = $currentweather;
@@ -79,6 +80,16 @@ foreach ($trendsplit as $items) {
                     "TREND" => substr($item, strpos($item, '/')+5),
                 ));
             }
+        } else if (preg_match('/^RMK$/', $item)) {
+            continue;
+        } else if (preg_match('/^LVP$/', $item)) {
+            continue;
+        } else if (preg_match('/^AUTO$/', $item)) {
+            $currentweather["AUTOMATIC"] = true;
+        } else if (preg_match('/BLU|BLACK|AMB|GRN|WHT|YLO|RED/', $item)) {
+            continue;
+        } else if (preg_match('/^ALPHA$|^BRAVO$|^CHARLIE$|^DELTA$/', $item)) {
+            continue;
         } else if (preg_match('/^[0-9]{5}KT$/', $item) || preg_match('/^VRB[0-9]{2}KT$/', $item) || preg_match('/^[0-9]{5}G[0-9]{2}KT$/', $item) || preg_match('/^VRB[0-9]{2}G[0-9]{2}KT$/', $item)) {
             if ($trendtype === "CURRENT") {
                 if (str_starts_with($item, "VRB")) {
@@ -190,7 +201,6 @@ foreach ($trendsplit as $items) {
             $time = substr($item, 2, 4);
         } else if (preg_match('/^EH[A-Z]{2}$/', $item)) {
             $ap = $item;
-        } else if (preg_match('/^ALPHA|^ALFA|^BRAVO|^CHARLIE|^DELTA/', $item)) {
         } else if (preg_match('/FEW|SCT|BKN|OVC/', $item)) {
             if ($trendtype === "CURRENT") {
                 array_push($currentweather["CLOUDS"], array(
@@ -211,7 +221,6 @@ foreach ($trendsplit as $items) {
                     "EXTRA" => substr($item, 6),
                 ));
             }
-        } else if (preg_match('/BLU|BLACK|AMB|GRN|WHT|YLO|RED/', $item)) {
         } else if (preg_match('/BC|BL|BR|DR|DS|DU|DZ|FC|FG|FU|FZ|GR|HZ|IC|MI|PL|PR|PY|RA|SA|SG|SH|SN|SS|SQ|TS|UP|VA/', $item)) {
             if ($trendtype === "CURRENT") {
                 array_push($currentweather["PHENOMENA"], $item);
@@ -220,11 +229,15 @@ foreach ($trendsplit as $items) {
             } else if ($trendtype === "TEMPORARY") {
                 array_push($tempoweather["PHENOMENA"], $item);
             }
+        } else if (preg_match('/^PO$/', $item)) {
+            continue;
+        } else if (preg_match('/^MG$/', $item)) {
+            continue;
         }
         //echo $item . '<br>';
     }
 }
 
-//print_r($currentweather["RVRVALUES"]);
-//echo "<br>" . $currentweather["LOWESTRVR"] . "<br>";
+//print_r($tempoweather["VISIBILITY"]);
+//echo "<br>" . $currentweather["AUTOMATIC"] . "<br>";
 ?>
