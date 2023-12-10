@@ -252,7 +252,7 @@ if ($currentweather["QNH"] == "") {
     $weather .= " .. QNH " . $currentweather["QNH"];
 }
 
-if ($ap !== "EHKD" || ($ap == "EHKD" && $currentweather["QNH"] < "1000")) {
+if ($ap !== "EHKD") {
     $weather .= " HECTOPASCAL";
 }
 
@@ -741,65 +741,79 @@ if (str_starts_with($ap, "EH")) {
     $arrrwy = $_GET['arr'];
 
     // Runway Condition Reports
-    foreach ($currentweather["PHENOMENA"] as $phenomenon) {
-        if ($ap == "EHEH") {
-            if (preg_match('/RA/', $phenomenon) && preg_match('/SN/', $phenomenon)) {
-                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. WET SNOW *100 PERCENT 6 MILLIMETERS';
-            } else if (preg_match('/^\-SN/', $phenomenon)) {
-                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. DRY SNOW *100 PERCENT 4 MILLIMETERS';
-            } else if (preg_match('/^\+SN/', $phenomenon)) {
-                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. DRY SNOW *100 PERCENT 12 MILLIMETERS';
-            } else if (preg_match('/SN/', $phenomenon)) {
-                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. DRY SNOW *100 PERCENT 8 MILLIMETERS';
-            } else if (preg_match('/^\+SH/', $phenomenon)) {
-                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET';
-            } else if (preg_match('/^RA|^SH|^DZ/', $phenomenon)) {
-                $rwycondition = 'RUNWAY CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET';
-            } else {
-                $rwycondition = 'RUNWAY CONDITION IS DRY';
-            }
-        } else if ($ap == "EHKD") {
-            if (preg_match('/\-SN/', $phenomenon)) {
-                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. SNOW 100 PERCENT 4 MILLIMETERS .. ';
-            } else if (preg_match('/\+SN/', $phenomenon)) {
-                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. SNOW 100 PERCENT 12 MILLIMETERS .. ';
-            } else if (preg_match('/SN/', $phenomenon)) {
-                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. SNOW 100 PERCENT 8 MILLIMETERS .. ';
-            } else if (preg_match('/\+SH/', $phenomenon)) {
-                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
-            } else if (preg_match('/RA|SH|DZ/', $phenomenon)) {
-                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET .. ';
-            } else if (preg_match('/-DZ/', $phenomenon)) {
-                $rwycondition = 'RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. 75 PERCENT WET .. ';
-            } else {
-                $rwycondition = 'RUNWAY CONDITION IS DRY .. ';
-            }
-        } else {
-            if (preg_match('/^SN/', $phenomenon) || preg_match('/SHSN$/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART 8 MILLIMETERS DRY SNOW .. SECOND PART 8 MILLIMETERS DRY SNOW .. THIRD PART 8 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-            } else if (preg_match('/RA/', $phenomenon) && preg_match('/SN/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART 6 MILLIMETERS WET SNOW .. SECOND PART 6 MILLIMETERS WET SNOW .. THIRD PART 6 MILLIMETERS WET SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-            } else if (preg_match('/^\-SN/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 4 MILLIMETERS DRY SNOW .. SECOND PART 4 MILLIMETERS DRY SNOW .. THIRD PART 4 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-            } else if (preg_match('/^\+SN/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 3 3 3 .. FIRST PART 12 MILLIMETERS DRY SNOW .. SECOND PART 12 MILLIMETERS DRY SNOW .. THIRD PART 12 MILLIMETERS DRY SNOW .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR'; // COULD ADD ' .. SNOW REMOVAL IN PROGRESS'
-            } else if (preg_match('/M[0-9]{2}\//', $metar) && preg_match('/FG/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 100 PERCENT, FROST .. SECOND PART *100 PERCENT, FROST .. THIRD PART *100 PERCENT, FROST .. SITUATIONAL AWARENESS .. ALL TAXIWAYS POOR .. ALL APRONS POOR';
-            } else if (preg_match('/RA/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET';
-            } else if (preg_match('/-DZ/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 50 PERCENT WET .. SECOND PART 50 PERCENT WET .. THIRD PART 50 PERCENT WET';
-            } else if (preg_match('/DZ/', $phenomenon)) {
-                $rwycondition = ' .. RUNWAY ' . $arrrwy . ' CONDITION REPORT AT TIME ' . $timestamp . ' .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET .. SECOND PART 75 PERCENT WET .. THIRD PART 75 PERCENT WET';
-            } else {
-                $rwycondition = '';
-            }
-        }
-    }
     if ($ap == "EHEH" || $ap == "EHKD") {
         $rwycondition = 'RUNWAY CONDITION IS DRY';
     } else {
         $rwycondition = '';
+    }
+    foreach ($currentweather["PHENOMENA"] as $phenomenon) {
+        if ($ap == "EHEH") {
+            if (preg_match('/DZ/', $phenomenon)) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. 75 PERCENT WET";
+            } else if (preg_match('/RA|SH/', $phenomenon)) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET";
+            } else if (preg_match('/FG/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT, FROST";
+            } else if (preg_match('/BR/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *75 PERCENT, FROST";
+            } else if (preg_match('/SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 4 4 4 .. *100 PERCENT DRY SNOW 10 MILLIMETERS";
+            } else if (preg_match('/\-SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT DRY SNOW 5 MILLIMETERS";
+            } else if (preg_match('/\+SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 3 3 3 .. *100 PERCENT DRY SNOW 15 MILLIMETERS";
+            } else if (preg_match('/SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 4 4 4 .. *100 PERCENT WET SNOW 8 MILLIMETERS";
+            } else if (preg_match('/\-SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET SNOW 4 MILLIMETERS";
+            } else if (preg_match('/\+SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 3 3 3 .. *100 PERCENT WET SNOW 12 MILLIMETERS";
+            }
+        } else if ($ap == "EHKD") {
+            if (preg_match('/DZ/', $phenomenon)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. 75 PERCENT WET";
+            } else if (preg_match('/RA|SH/', $phenomenon)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET";
+            } else if (preg_match('/FG/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT, FROST";
+            } else if (preg_match('/BR/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *75 PERCENT, FROST";
+            } else if (preg_match('/SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 4 4 4 .. *100 PERCENT DRY SNOW 10 MILLIMETERS";
+            } else if (preg_match('/\-SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT DRY SNOW 5 MILLIMETERS";
+            } else if (preg_match('/\+SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 3 3 3 .. *100 PERCENT DRY SNOW 15 MILLIMETERS";
+            } else if (preg_match('/SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 4 4 4 .. *100 PERCENT WET SNOW 8 MILLIMETERS";
+            } else if (preg_match('/\-SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. *100 PERCENT WET SNOW 4 MILLIMETERS";
+            } else if (preg_match('/\+SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 3 3 3 .. *100 PERCENT WET SNOW 12 MILLIMETERS";
+            }
+        } else {
+            if (preg_match('/DZ/', $phenomenon)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET .. SECOND PART 75 PERCENT WET .. THIRD PART 75 PERCENT WET";
+            } else if (preg_match('/RA|SH/', $phenomenon)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT WET .. SECOND PART *100 PERCENT WET .. THIRD PART *100 PERCENT WET";
+            } else if (preg_match('/FG/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART *100 PERCENT, FROST .. SECOND PART *100 PERCENT, FROST .. THIRD PART *100 PERCENT, FROST";
+            } else if (preg_match('/BR/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT, FROST .. SECOND PART 75 PERCENT, FROST .. THIRD PART 75 PERCENT, FROST";
+            } else if (preg_match('/SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART *100 PERCENT DRY SNOW 10 MILLIMETERS .. SECOND PART *100 PERCENT DRY SNOW 10 MILLIMETERS .. THIRD PART *100 PERCENT DRY SNOW 10 MILLIMETERS";
+            } else if (preg_match('/\-SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT DRY SNOW 5 MILLIMETERS .. SECOND PART 75 PERCENT DRY SNOW 5 MILLIMETERS .. THIRD PART 75 PERCENT DRY SNOW 5 MILLIMETERS";
+            } else if (preg_match('/\+SN/', $phenomenon) && preg_match('/M[0-9]{2}\//', $metar)) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 3 3 3 .. FIRST PART *100 PERCENT DRY SNOW 15 MILLIMETERS .. SECOND PART *100 PERCENT DRY SNOW 15 MILLIMETERS .. THIRD PART *100 PERCENT DRY SNOW 15 MILLIMETERS";
+            } else if (preg_match('/SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 4 4 4 .. FIRST PART *100 PERCENT WET SNOW 8 MILLIMETERS .. SECOND PART *100 PERCENT WET SNOW 8 MILLIMETERS .. THIRD PART *100 PERCENT DWETY SNOW 8 MILLIMETERS";
+            } else if (preg_match('/\-SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 5 5 5 .. FIRST PART 75 PERCENT WET SNOW 4 MILLIMETERS .. SECOND PART 75 PERCENT WET SNOW 4 MILLIMETERS .. THIRD PART 75 PERCENT DWETY SNOW 4 MILLIMETERS";
+            } else if (preg_match('/\+SN/', $phenomenon) && (preg_match('/[0-9]{2}\//', $metar) || preg_match('/RA/', $phenomenon))) {
+                $rwycondition = "RUNWAY " . $arrrwy . " CONDITION REPORT AT TIME " . $timestamp . " .. RUNWAY CONDITION CODE 3 3 3 .. FIRST PART *100 PERCENT WET SNOW 12 MILLIMETERS .. SECOND PART *100 PERCENT WET SNOW 12 MILLIMETERS .. THIRD PART *100 PERCENT DWETY SNOW 12 MILLIMETERS";
+            }
+        }
     }
 
     if ($ap === "EHAM" && $version == "A") {
