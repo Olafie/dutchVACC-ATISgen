@@ -8,4 +8,3 @@ $onlineATC = array();
 foreach ($jsondecode as $i => $atc) {
     array_push($onlineATC, $atc['callsign']);
 }
-?>

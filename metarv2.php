@@ -240,4 +240,3 @@ foreach ($trendsplit as $items) {
 
 //print_r($tempoweather["VISIBILITY"]);
 //echo "<br>" . $currentweather["AUTOMATIC"] . "<br>";
-?>
