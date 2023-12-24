@@ -238,5 +238,5 @@ foreach ($trendsplit as $items) {
     }
 }
 
-//print_r($tempoweather["VISIBILITY"]);
+//print_r($currentweather["RVRVALUES"]);
 //echo "<br>" . $currentweather["AUTOMATIC"] . "<br>";

@@ -745,6 +745,18 @@ if (preg_match('/[0-9][0-9][0-9][0-9][DNU]/', $metar, $rvrmatch)) {
     $rvr = '9999';
 }
 
+if (array_key_exists(3, $currentweather["RVRVALUES"])) {
+    $rvr = min($currentweather["RVRVALUES"][3]["VIS"],$currentweather["RVRVALUES"][2]["VIS"],$currentweather["RVRVALUES"][1]["VIS"],$currentweather["RVRVALUES"][0]["VIS"]);
+} else if (array_key_exists(2, $currentweather["RVRVALUES"])) {
+    $rvr = min($currentweather["RVRVALUES"][2]["VIS"],$currentweather["RVRVALUES"][1]["VIS"],$currentweather["RVRVALUES"][0]["VIS"]);
+} else if (array_key_exists(1, $currentweather["RVRVALUES"])) {
+    $rvr = min($currentweather["RVRVALUES"][1]["VIS"],$currentweather["RVRVALUES"][0]["VIS"]);
+} else if (array_key_exists(0, $currentweather["RVRVALUES"])) {
+    $rvr = $currentweather["RVRVALUES"][0]["VIS"];
+} else {
+    $rvr = "9999";
+}
+
 if (str_starts_with($ap, "EH")) {
     $trl = intval(ceil((307.8 - 0.13986 * $currentweather["TEMPERATURE"] - 0.26224 * $currentweather["QNH"]) / 5) * 5);
 
